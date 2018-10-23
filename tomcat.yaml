@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: tomcat
+    tier: development
+  name: tomcat
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: tomcat
+      tier: development
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: tomcat
+        tier: development
+    spec:
+      containers:
+      - image: demoreg12.azurecr.io/sonic:latest
+        imagePullPolicy: Always
+        name: tomcat
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 300m
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+      imagePullSecrets:
+      - name: acr-auth
